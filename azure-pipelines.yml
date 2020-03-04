@@ -1,4 +1,7 @@
 jobs:
+- task: UseNode@1
+  inputs:
+    version: '12.13.0'
 
 - job: web
   pool:
