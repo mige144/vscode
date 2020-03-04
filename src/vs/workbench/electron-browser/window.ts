@@ -422,8 +422,8 @@ export class ElectronWindow extends Disposable {
 		this.updateTouchbarMenu();
 
 		// Crash reporter (if enabled)
-		if (!this.environmentService.disableCrashReporter && product.crashReporter && product.hockeyApp && this.configurationService.getValue('telemetry.enableCrashReporter')) {
-			this.setupCrashReporter(product.crashReporter.companyName, product.crashReporter.productName, product.hockeyApp);
+		if (!this.environmentService.disableCrashReporter && product.crashReporter && product.appCenter && this.configurationService.getValue('telemetry.enableCrashReporter')) {
+			this.setupCrashReporter(product.crashReporter.companyName, product.crashReporter.productName, product.appCenter);
 		}
 	}
 
@@ -536,16 +536,19 @@ export class ElectronWindow extends Disposable {
 		}
 	}
 
-	private async setupCrashReporter(companyName: string, productName: string, hockeyAppConfig: typeof product.hockeyApp): Promise<void> {
-		if (!hockeyAppConfig) {
+	private async setupCrashReporter(companyName: string, productName: string, appCenterConfig: typeof product.appCenter): Promise<void> {
+		if (!appCenterConfig) {
 			return;
 		}
+
+		const appCenterURL = isWindows ? appCenterConfig[process.arch === 'ia32' ? 'win32-ia32' : 'win32-x64']
+			: isLinux ? appCenterConfig[`linux-x64`] : appCenterConfig.darwin;
 
 		// base options with product info
 		const options: CrashReporterStartOptions = {
 			companyName,
 			productName,
-			submitURL: isWindows ? hockeyAppConfig[process.arch === 'ia32' ? 'win32-ia32' : 'win32-x64'] : isLinux ? hockeyAppConfig[`linux-x64`] : hockeyAppConfig.darwin,
+			submitURL: appCenterURL.concat('&uid=', this.environmentService.configuration.machineId || ''),
 			extra: {
 				vscode_version: product.version,
 				vscode_commit: product.commit || ''
