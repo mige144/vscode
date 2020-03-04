@@ -1,12 +1,8 @@
 jobs:
-- task: UseNode@1
-  inputs:
-    version: '12.13.0'
-
-- job: web
+- job: Linux
   pool:
     vmImage: 'Ubuntu-16.04'
   steps:
-  - template: build/azure-pipelines/web/product-build-web.yml
+  - template: build/azure-pipelines/linux/continuous-build-linux.yml
 
 
