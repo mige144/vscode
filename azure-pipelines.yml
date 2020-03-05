@@ -1,4 +1,4 @@
-jobs:
+jobs: 
 - job: Linux
   pool:
     vmImage: 'Ubuntu-16.04'
